@@ -69,6 +69,7 @@ impl Content {
         })
     }
 
+    /// This function assume that `path` is the root of `contents` path
     pub fn from_dir<P: AsRef<Path>>(dir: &P) -> Vec<Self> {
         let all_content_paths = Self::get_clean_list_of_content_paths(dir);
         let mut contents = Vec::<Self>::with_capacity(all_content_paths.len());
@@ -111,7 +112,7 @@ mod content_test {
 
     fn get_path_to_test_files() -> PathBuf {
         let mut root_path = PathBuf::from(MAIN_DIR);
-        root_path.push("test_files/index/contents");
+        root_path.push("test_files/blog/contents");
 
         root_path
     }
