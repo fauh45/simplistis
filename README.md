@@ -33,20 +33,19 @@ summary = “Super simplistic static website generator”
 —
 ```
 
-Web Template Subsystem
+### Web Template Subsystem
 
 This components use the information from the content subsystem and generates pages based on another file system.
 
 ```
 (root) ->
 	pages ->
-		content.html (post html template)
-		index.html (main page template)
+		template.html (main page template)
 		… (could be other templates here, but I’m not sure for now)
-	contents -> (as described on the previous subsystem)
-		[slug].md 
+
+      contents -> (as described on the previous subsystem)
+        [slug].md
 	config.toml (main configuration file)
 ```
 
 This subsystem will get all the content data, generate it to its content.html, make a list of all the contents, then generate all the pages including the post files. Ta-da, that’s your static site!
-
