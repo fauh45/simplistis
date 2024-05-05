@@ -4,5 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono = "0.4.38"
+pulldown-cmark = "0.10.3"
 serde = { version = "1.0.199", features = ["derive"] }
 toml = "0.8.12"
+toml-datetime-compat = { version = "0.3.0", features = ["chrono"] }
