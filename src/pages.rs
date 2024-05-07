@@ -30,10 +30,10 @@ impl Page {
         }
 
         let mut template_file = current_path.clone();
-        template_file.push("template.html");
+        template_file.push("template.hbs");
 
         if !template_file.exists() {
-            println!("[Page::parse_one_page] No template.html on the page!");
+            println!("[Page::parse_one_page] No template.hbs on the page!");
 
             return None;
         }
@@ -47,7 +47,7 @@ impl Page {
             .unwrap()
             .read_to_string(&mut template_content)
         {
-            println!("[Page::parse_one_page] Cannot open template.html file! Error: {err:#?}");
+            println!("[Page::parse_one_page] Cannot open template.hbs file! Error: {err:#?}");
 
             return None;
         }
@@ -87,16 +87,16 @@ impl Page {
     /// ....(path:dir) ->
     /// ........contents (:dir) ->
     /// ............(contents:file).md
-    /// ........template.html (:file)
-    /// ....templates.html (root page "/" template:file)
+    /// ........template.hbs (:file)
+    /// ....templates.hbs (root page "/" template:file)
     /// ```
     pub fn from_dir<P: AsRef<Path>>(path: &P) -> Option<Self> {
         let mut index_template_path = PathBuf::new();
         index_template_path.push(path);
-        index_template_path.push("template.html");
+        index_template_path.push("template.hbs");
 
         if !index_template_path.exists() {
-            println!("[Page::from_dir] Index template.html does not exist!");
+            println!("[Page::from_dir] Index template.hbs does not exist!");
 
             return None;
         }
