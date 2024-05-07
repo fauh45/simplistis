@@ -4,6 +4,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use handlebars::Handlebars;
+
 use crate::content::Content;
 
 #[derive(Debug)]
@@ -52,8 +54,11 @@ impl Page {
             return None;
         }
 
+        let mut current_root_path = String::from("/");
+        current_root_path.push_str(current_dir.unwrap().to_str().unwrap());
+
         let mut current_root = Self {
-            path: current_dir.unwrap().to_os_string().into_string().unwrap(),
+            path: current_root_path.clone(),
             content: None,
             template: template_content.clone(),
             child: vec![],
@@ -66,9 +71,15 @@ impl Page {
             let contents = Content::from_dir(&current_path);
 
             for content in contents {
+                let mut child_path = current_root_path.clone();
+                // Add another sub-path
+                child_path.push('/');
+
+                // This should be safe as `slug` is guaranteed to always be there
+                child_path.push_str(content.metadata.slug.as_ref().unwrap());
+
                 current_root.child.push(Self {
-                    // This should be safe as `slug` is guaranteed to always be there
-                    path: content.metadata.slug.as_ref().unwrap().into(),
+                    path: child_path,
                     template: template_content.clone(),
                     content: Some(content),
                     child: vec![],
@@ -139,6 +150,10 @@ impl Page {
 
         Some(root_page)
     }
+
+    pub fn render(self) {
+        let hbs_registry = Handlebars::new();
+    }
 }
 
 #[cfg(test)]
@@ -200,7 +215,7 @@ mod page_test {
             "There should exactly 1 child (content) of blog page!"
         );
         assert_eq!(
-            blog_page.path, "blog",
+            blog_page.path, "/blog",
             "Blog page should have path of blog!"
         );
         assert!(
@@ -219,14 +234,11 @@ mod page_test {
         // Asserted with `is_some` before
         let test_content_content = test_content.content.as_ref().unwrap();
 
+        let mut content_path = String::from("/blog/");
+        content_path.push_str(test_content_content.metadata.slug.as_ref().unwrap());
+
         assert_eq!(
-            test_content.path,
-            test_content_content
-                .metadata
-                .slug
-                .as_ref()
-                .unwrap()
-                .to_string(),
+            test_content.path, content_path,
             "The path of a content node should be equal to the slug!"
         );
     }
