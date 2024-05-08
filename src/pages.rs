@@ -80,7 +80,7 @@ impl Page {
 
         let mut current_root_path = String::from("/");
         current_root_path.push_str(
-            &current_path
+            current_path
                 .strip_prefix(base_path)
                 .unwrap()
                 .to_str()
