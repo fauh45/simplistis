@@ -176,7 +176,11 @@ impl Page {
         let mut render_data = Map::<String, Value>::new();
 
         // Should be safe as slug are always there
-        let mut slug = self.content.metadata.slug.as_ref().unwrap().to_string();
+        let mut slug = if self.is_dir_root {
+            "index".to_string()
+        } else {
+            self.content.metadata.slug.as_ref().unwrap().to_string()
+        };
         slug.push_str(".html");
         output_path.push(slug);
 
