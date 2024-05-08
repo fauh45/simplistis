@@ -5,11 +5,13 @@ use std::{
 };
 
 use pulldown_cmark::Parser;
+use serde::Serialize;
 
 use crate::preparser::ContentMetadata;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Content {
+    #[serde(skip_serializing)]
     raw_content: String,
     pub metadata: ContentMetadata,
 }
@@ -26,6 +28,10 @@ impl Content {
                         && entry_path
                             .extension()
                             .is_some_and(|extension| extension == "md")
+                        && entry_path
+                            .file_name()
+                            // Index content should always be processed separately
+                            .is_some_and(|file_name| file_name != "_index.md")
                 }) {
                     list_of_contents.push(entry_path);
                 }
@@ -112,7 +118,7 @@ mod content_test {
 
     fn get_path_to_test_files() -> PathBuf {
         let mut root_path = PathBuf::from(MAIN_DIR);
-        root_path.push("test_files/blog/contents");
+        root_path.push("test_files/blog");
 
         root_path
     }
