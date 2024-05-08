@@ -4,7 +4,7 @@ author = "fauh45"
 tags = ["test", "world", "first!"]
 ---
 
-# Hello World!
+## Hello World
 
 This file is just to do testing on the parsing system! But you can absolutely use
 this file to check how you should be writing content (or a whole damn website)
