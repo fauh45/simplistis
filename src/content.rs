@@ -9,7 +9,7 @@ use serde::Serialize;
 
 use crate::preparser::ContentMetadata;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Content {
     #[serde(skip_serializing)]
     raw_content: String,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Default, Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub struct ContentMetadata {
     pub(crate) title: Option<String>,
     pub(crate) slug: Option<String>,

@@ -10,7 +10,7 @@ use serde_json::{value::Value, Map};
 
 use crate::content::Content;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Page {
     pub(crate) path: String,
     content: Content,
@@ -65,7 +65,7 @@ impl Page {
         index_content_path.push("_index.md");
 
         if !index_content_path.exists() {
-            println!("[Page::parse_one_page] No _index.md on directory {current_dir:?}!");
+            println!("[Page::parse_one_page] No _index.md on directory {current_path:?}!");
 
             return None;
         }
@@ -75,13 +75,13 @@ impl Page {
 
         let Ok(index_content) = Content::from_file(&index_content_path) else {
             println!(
-                "[Page::parse_one_page] Failed to parse _index.md on directory {current_dir:?}!"
+                "[Page::parse_one_page] Failed to parse _index.md on directory {current_path:?}!"
             );
 
             return None;
         };
 
-        let mut current_root_path = String::from("/");
+        let mut current_root_path = String::from("");
         current_root_path.push_str(
             current_path
                 .strip_prefix(base_path)
@@ -105,9 +105,7 @@ impl Page {
         } else {
             for content in contents {
                 let mut child_path = current_root_path.clone();
-                // Add another sub-path
                 child_path.push('/');
-
                 // This should be safe as `slug` is guaranteed to always be there
                 child_path.push_str(content.metadata.slug.as_ref().unwrap());
 
@@ -168,24 +166,42 @@ impl Page {
         Some(root_page)
     }
 
+    pub fn render_all<P: AsRef<Path>>(
+        self,
+        output_dir: &P,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let page_child = Vec::clone(&self.child);
+        self.render(output_dir)?;
+
+        for child in page_child {
+            if child.is_dir_root {
+                child.render_all(output_dir)?;
+            } else {
+                child.render(output_dir)?;
+            }
+        }
+
+        Ok(())
+    }
+
     /// `output_dir` expects to be valid and already exist, and is the root of the file that will be rendered.
     pub fn render<P: AsRef<Path>>(self, output_dir: &P) -> Result<(), Box<dyn std::error::Error>> {
         let mut output_path = PathBuf::new();
         output_path.push(output_dir);
 
+        if !self.path.is_empty() {
+            output_path.push(self.path.clone());
+        }
+
+        fs::create_dir_all(&output_path)?;
+        output_path.push("index.html");
+
+        let current_path = self.path.clone();
+        println!("[Page::render] path {output_path:#?}, current path: {current_path:#?}");
+
         let mut hbs_registry = Handlebars::new();
         hbs_registry.register_template_string(&self.path, self.template)?;
-
         let mut render_data = Map::<String, Value>::new();
-
-        // Should be safe as slug are always there
-        let mut slug = if self.is_dir_root {
-            "index".to_string()
-        } else {
-            self.content.metadata.slug.as_ref().unwrap().to_string()
-        };
-        slug.push_str(".html");
-        output_path.push(slug);
 
         render_data.insert("content".into(), to_json(self.content.to_html()));
 
@@ -193,7 +209,8 @@ impl Page {
             render_data.insert("content_list".into(), to_json(self.child));
         }
 
-        let output_file = File::create(output_dir)?;
+        println!("[Page::render] writing file to {output_path:#?}");
+        let output_file = File::create(output_path)?;
         hbs_registry.render_to_write(&self.path, &render_data, output_file)?;
 
         Ok(())
