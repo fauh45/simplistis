@@ -1,7 +1,15 @@
 [package]
 name = "simplistis"
+description = "A super simple markdown-based static site generator"
 version = "0.1.0"
 edition = "2021"
+authors = ["Fauzan <fauzan@fauh45.my.id>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/fauh45/simplistis"
+repository = "https://github.com/fauh45/simplistis"
+keywords = ["cli", "static-site-generator", "web", "markdown", "handlebars"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 chrono = "0.4.38"
