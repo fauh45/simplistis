@@ -14,10 +14,13 @@ use crate::content::Content;
 pub struct Page {
     pub(crate) path: String,
     content: Content,
+    #[serde(skip_serializing)]
     template: String,
 
     /// If true this represent the page to be the root of a directory
     pub(crate) is_dir_root: bool,
+
+    #[serde(skip_serializing)]
     pub(crate) child: Vec<Page>,
 }
 
@@ -185,6 +188,10 @@ impl Page {
         output_path.push(slug);
 
         render_data.insert("content".into(), to_json(self.content.to_html()));
+
+        if self.is_dir_root {
+            render_data.insert("content_list".into(), to_json(self.child));
+        }
 
         let output_file = File::create(output_dir)?;
         hbs_registry.render_to_write(&self.path, &render_data, output_file)?;
