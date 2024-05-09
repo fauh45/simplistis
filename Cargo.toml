@@ -8,7 +8,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/fauh45/simplistis"
 repository = "https://github.com/fauh45/simplistis"
-keywords = ["cli", "static-site-generator", "web", "markdown", "handlebars"]
+keywords = ["cli", "ssg", "web", "markdown", "handlebars"]
 categories = ["command-line-utilities"]
 
 [dependencies]
