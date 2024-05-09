@@ -38,6 +38,14 @@ in the future, but rest assured I'll be sure to make it compatible!).
 simplistis [template directory root] [output directory root]
 ```
 
+> [!WARNING]
+> This will also clear off any file (recursively) of your `[output directory root]`!
+
+## TODO
+
+- [ ] Fix test to follow the new convention (if you check git, there's
+      2 different folder structure before this)
+
 ## Developer
 
 This project is developed by the all the contributors. The list should show below.
